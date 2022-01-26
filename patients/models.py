@@ -1,3 +1,4 @@
+from distutils.command.build_scripts import first_line_re
 from statistics import mode
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -33,7 +34,13 @@ class Patient(models.Model):
         'StaffMember', blank=True, null=True, on_delete=models.SET_NULL
     )
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}, {self.age}, {self.nhs_number}"
+
 
 class StaffMember(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(choices=ROLES, max_length=50)
+
+    def __str__(self):
+        return f"{self.role} {self.user.first_name} {self.user.last_name}"
