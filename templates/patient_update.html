@@ -7,7 +7,7 @@
   </head>
   
   <body>
-    <a href="/patients">Back to patient list</a>
+    <a href="{% url 'patients:patient-detail' patient.pk %}">Back to {{ patient.first_name }}'s details</a>
     <hr />
     <h1>Update {{ patient.first_name }}'s Details</h1>
     <form method="post">

@@ -7,14 +7,14 @@
   </head>
   
   <body>
-    <a href="/patients">Back to patient list</a>
+    <a href="{% url 'patients:patient-list' %}">Back to patient list</a>
     <hr />
     <h1>{{ patient.first_name }}'s Details</h1>
       <p>Age: {{ patient.age }}</p>
       <p>NHS Number: {{ patient.nhs_number }}</p>
       <p>Assigned to: {{ patient.assigned_to }}</p>
       <hr />
-      <a href="/patients/{{ patient.pk }}/update/">Update</a>
-      <a href="/patients/{{ patient.pk }}/delete/">Delete</a>
+      <a href="{% url 'patients:patient-update' patient.pk %}">Update</a>
+      <a href="{% url 'patients:patient-delete' patient.pk %}">Delete</a>
   </body>
 </html>

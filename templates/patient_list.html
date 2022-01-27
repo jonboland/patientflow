@@ -18,12 +18,12 @@
   </head>
   
   <body>
-    <a href="/patients/add/">Add patient</a>
+    <a href="{% url 'patients:patient-add' %}">Add patient</a>
     <hr />
     <h1>Patient List</h1>
       {% for patient in patients %}
         <div class="lead">
-          <a href="/patients/{{ patient.pk }}/">{{ patient.first_name }} {{ patient.last_name }}</a>, {{ patient.age }}
+          <a href="{% url 'patients:patient-detail' patient.pk %}">{{ patient.first_name }} {{ patient.last_name }}</a>, {{ patient.age }}
         </div>
       {% endfor %}  
   </body>
