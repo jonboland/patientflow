@@ -5,7 +5,7 @@ from .forms import PatientModelForm
 
 
 def home_page(request):
-    return HttpResponse('This is the home page')
+    return render(request, 'index.html')
 
 
 def patient_list(request):
