@@ -3,17 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Patient</title>
+    <title>Update Patient Details</title>
   </head>
   
   <body>
     <a href="/patients">Back to patient list</a>
     <hr />
-    <h1>Add Patient</h1>
+    <h1>Update {{ patient.first_name }}'s Details</h1>
     <form method="post">
       {% csrf_token %}
       {{ form.as_p }}
-      <button type="submit">Add</button>
+      <button type="submit">Update</button>
     </form>
   </body>
 </html>
