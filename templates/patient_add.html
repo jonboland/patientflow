@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Patient</title>
-  </head>
-  
-  <body>
-    <a href="{% url 'patients:patient-list' %}">Back to patient list</a>
-    <hr />
-    <h1>Add Patient</h1>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Add</button>
-    </form>
-  </body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Add Patient{% endblock title %}
+
+{% block content %}
+  <a href="{% url 'patients:patient-list' %}">Back to patient list</a>
+  <hr />
+  <h1>Add Patient</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add</button>
+  </form>
+{% endblock content %}

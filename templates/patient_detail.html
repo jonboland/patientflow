@@ -1,20 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Details</title>
-  </head>
-  
-  <body>
-    <a href="{% url 'patients:patient-list' %}">Back to patient list</a>
+{% extends "base.html" %}
+
+{% block title %}Patient Details{% endblock title %}
+
+{% block content %}
+  <a href="{% url 'patients:patient-list' %}">Back to patient list</a>
+  <hr />
+  <h1>{{ patient.first_name }}'s Details</h1>
+    <p>Age: {{ patient.age }}</p>
+    <p>NHS Number: {{ patient.nhs_number }}</p>
+    <p>Assigned to: {{ patient.assigned_to }}</p>
     <hr />
-    <h1>{{ patient.first_name }}'s Details</h1>
-      <p>Age: {{ patient.age }}</p>
-      <p>NHS Number: {{ patient.nhs_number }}</p>
-      <p>Assigned to: {{ patient.assigned_to }}</p>
-      <hr />
-      <a href="{% url 'patients:patient-update' patient.pk %}">Update</a>
-      <a href="{% url 'patients:patient-delete' patient.pk %}">Delete</a>
-  </body>
-</html>
+    <a href="{% url 'patients:patient-update' patient.pk %}">Update</a>
+    <a href="{% url 'patients:patient-delete' patient.pk %}">Delete</a>
+{% endblock content %}
