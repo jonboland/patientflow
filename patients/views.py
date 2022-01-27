@@ -50,3 +50,9 @@ def patient_update(request, pk):
         'patient': patient,
     }
     return render(request, 'patient_update.html', context)
+
+
+def patient_delete(request, pk):
+    patient = Patient.objects.get(id=pk)
+    patient.delete()
+    return redirect('/patients')
