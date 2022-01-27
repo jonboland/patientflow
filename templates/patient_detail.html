@@ -13,5 +13,8 @@
       <p>Age: {{ patient.age }}</p>
       <p>NHS Number: {{ patient.nhs_number }}</p>
       <p>Assigned to: {{ patient.assigned_to }}</p>
+      <hr />
+      <a href="/patients/{{ patient.pk }}/update/">Update</a>
+      <a href="/patients/{{ patient.pk }}/delete/">Delete</a>
   </body>
 </html>
