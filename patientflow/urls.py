@@ -19,6 +19,6 @@ from patients.views import home_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home_page),
+    path('', home_page, name='home-page'),
     path('patients/', include('patients.urls', namespace='patients'))
 ]

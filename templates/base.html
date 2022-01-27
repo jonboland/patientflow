@@ -3,24 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>
     {% block title %}Patient Flow{% endblock %}
     </title>
-    <style>
-      .patient {
-        padding-top: 15px;
-        padding-bottom: 15px;
-        padding-right: 8px;
-        padding-bottom: 8px;
-        margin-top: 15px;
-        background-color: #f2f2f2;
-        width: 100%;       
-      }
-    </style>
   </head>
   
   <body>
-    {% block content %}
-    {% endblock content %}
+    <div class="max-w-7xl mx-auto">
+      {% include 'navbar.html' %}
+      {% block content %}
+      {% endblock content %}
+    <div>
   </body>
 </html>
