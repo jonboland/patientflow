@@ -1,8 +1,16 @@
 from django.core.mail import send_mail
 from django.shortcuts import reverse
 from django.views import generic
-from .forms import PatientModelForm
+from .forms import PatientModelForm, CustomUserCreationForm
 from .models import Patient
+
+
+class RegisterView(generic.CreateView):
+    template_name = 'registration/register.html'
+    form_class = CustomUserCreationForm
+
+    def get_success_url(self):
+        return reverse('login')
 
 
 class HomePageView(generic.TemplateView):
