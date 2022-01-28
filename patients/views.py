@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.shortcuts import reverse
 from django.views import generic
 from .forms import PatientModelForm
@@ -26,6 +27,15 @@ class PatientAddView(generic.CreateView):
 
     def get_success_url(self):
         return reverse('patients:patient-list')
+
+    def form_valid(self, form):
+        send_mail(
+            subject="New patient record added",
+            message="Log in to Patient Flow to view the new record.",
+            from_email="test@test.co.uk",
+            recipient_list=["testuser@test.co.uk"],
+        )
+        return super(PatientAddView, self).form_valid(form)
 
 
 class PatientUpdateView(generic.UpdateView):
