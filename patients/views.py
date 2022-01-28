@@ -1,58 +1,45 @@
-from django.shortcuts import redirect, render
-from django.http import HttpResponse
-from .models import Patient
+from django.shortcuts import reverse
+from django.views import generic
 from .forms import PatientModelForm
+from .models import Patient
 
 
-def home_page(request):
-    return render(request, 'index.html')
+class HomePageView(generic.TemplateView):
+    template_name = 'index.html'
 
 
-def patient_list(request):
-    patients = Patient.objects.all()
-    context = {
-        'patients': patients
-    }
-    return render(request, 'patient_list.html', context)
+class PatientListView(generic.ListView):
+    template_name = 'patient_list.html'
+    queryset = Patient.objects.all()
+    context_object_name = 'patients'
 
 
-def patient_detail(request, pk):
-    patient = Patient.objects.get(id=pk)
-    context = {
-        'patient': patient
-    }
-    return render(request, 'patient_detail.html', context)
+class PatientDetailView(generic.DetailView):
+    template_name = 'patient_detail.html'
+    queryset = Patient.objects.all()
+    context_object_name = 'patient'
 
 
-def patient_add(request):
-    form = PatientModelForm()
-    if request.method == 'POST':
-        form = PatientModelForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('/patients')
-    context = {
-        'form': form
-    }
-    return render(request, 'patient_add.html', context)
+class PatientAddView(generic.CreateView):
+    template_name = 'patient_add.html'
+    form_class = PatientModelForm
+
+    def get_success_url(self):
+        return reverse('patients:patient-list')
 
 
-def patient_update(request, pk):
-    patient = Patient.objects.get(id=pk)
-    form = PatientModelForm(instance=patient)
-    if request.method == 'POST':
-        form = PatientModelForm(request.POST, instance=patient)
-        if form.is_valid():
-            form.save()
-            return redirect('/patients')
-    context = {
-        'form': form,
-        'patient': patient,
-    }
-    return render(request, 'patient_update.html', context)
+class PatientUpdateView(generic.UpdateView):
+    template_name = 'patient_update.html'
+    queryset = Patient.objects.all()
+    form_class = PatientModelForm
+
+    def get_success_url(self):
+        return reverse('patients:patient-list')
 
 
-def patient_delete(request, pk):
-    patient = Patient.objects.get(id=pk)
-    patient.delete()
-    return redirect('/patients')
+class PatientDeleteView(generic.DeleteView):
+    template_name = 'patient_delete.html'
+    queryset = Patient.objects.all()
+
+    def get_success_url(self):
+        return reverse('patients:patient-list')
