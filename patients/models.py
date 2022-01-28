@@ -20,6 +20,13 @@ class User(AbstractUser):
     pass
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
+
+
 class Patient(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -40,7 +47,9 @@ class Patient(models.Model):
 
 class StaffMember(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(choices=ROLES, max_length=50)
+    organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    role = models.CharField(choices=ROLES, max_length=50)    
+
 
     def __str__(self):
         return f"{self.role} {self.user.first_name} {self.user.last_name}"
