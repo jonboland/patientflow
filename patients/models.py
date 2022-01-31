@@ -1,6 +1,7 @@
 from distutils.command.build_scripts import first_line_re
 from statistics import mode
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser
 
 
@@ -18,6 +19,13 @@ ROLES = (
 
 class User(AbstractUser):
     pass
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Patient(models.Model):
@@ -40,7 +48,17 @@ class Patient(models.Model):
 
 class StaffMember(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(choices=ROLES, max_length=50)
+    organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    role = models.CharField(choices=ROLES, max_length=50)    
+
 
     def __str__(self):
         return f"{self.role} {self.user.first_name} {self.user.last_name}"
+
+
+def post_user_added_signal(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+
+post_save.connect(post_user_added_signal, sender=User)

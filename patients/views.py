@@ -1,7 +1,9 @@
 from django.core.mail import send_mail
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.views import generic
-from .forms import PatientModelForm, CustomUserCreationForm
+
+from .forms import CustomUserCreationForm, PatientModelForm
 from .models import Patient
 
 
@@ -17,19 +19,19 @@ class HomePageView(generic.TemplateView):
     template_name = 'index.html'
 
 
-class PatientListView(generic.ListView):
+class PatientListView(LoginRequiredMixin, generic.ListView):
     template_name = 'patient_list.html'
     queryset = Patient.objects.all()
     context_object_name = 'patients'
 
 
-class PatientDetailView(generic.DetailView):
+class PatientDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = 'patient_detail.html'
     queryset = Patient.objects.all()
     context_object_name = 'patient'
 
 
-class PatientAddView(generic.CreateView):
+class PatientAddView(LoginRequiredMixin, generic.CreateView):
     template_name = 'patient_add.html'
     form_class = PatientModelForm
 
@@ -46,7 +48,7 @@ class PatientAddView(generic.CreateView):
         return super(PatientAddView, self).form_valid(form)
 
 
-class PatientUpdateView(generic.UpdateView):
+class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'patient_update.html'
     queryset = Patient.objects.all()
     form_class = PatientModelForm
@@ -55,7 +57,7 @@ class PatientUpdateView(generic.UpdateView):
         return reverse('patients:patient-list')
 
 
-class PatientDeleteView(generic.DeleteView):
+class PatientDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = 'patient_delete.html'
     queryset = Patient.objects.all()
 
