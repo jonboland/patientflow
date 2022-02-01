@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Patient Details{% endblock title %}
+{% block title %}Staff Member Details{% endblock title %}
 
 {% block content %}
 
@@ -8,16 +8,16 @@
   <div class="container px-5 py-24 mx-auto">
     <div class="lg:w-4/5 mx-auto flex flex-wrap">
       <div class="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
-        <h2 class="text-sm title-font text-gray-500 tracking-widest">PATIENT</h2>
-        <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{ patient.first_name }} {{ patient.last_name }}</h1>
+        <h2 class="text-sm title-font text-gray-500 tracking-widest">STAFF MEMBER</h2>
+        <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{ staff_member.first_name }} {{ staff_member.last_name }}</h1>
         <div class="flex mb-4">
-          <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1" href="{% url 'patients:patient-detail' patient.pk %}">
+          <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1" href="{% url 'staff:staff-member-detail' staff_member.pk %}">
             Overview
           </a>
           <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1">
             Reviews
           </a>
-          <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1" href="{% url 'patients:patient-update' patient.pk %}">
+          <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1" href="{% url 'staff:staff-member-update' staff_member.pk %}">
             Update Details
           </a>
         </div>

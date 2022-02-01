@@ -51,7 +51,6 @@ class StaffMember(models.Model):
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     role = models.CharField(choices=ROLES, max_length=50)    
 
-
     def __str__(self):
         return f"{self.role} {self.user.first_name} {self.user.last_name}"
 

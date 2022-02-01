@@ -25,12 +25,6 @@ class PatientListView(LoginRequiredMixin, generic.ListView):
     context_object_name = 'patients'
 
 
-class PatientDetailView(LoginRequiredMixin, generic.DetailView):
-    template_name = 'patient_detail.html'
-    queryset = Patient.objects.all()
-    context_object_name = 'patient'
-
-
 class PatientAddView(LoginRequiredMixin, generic.CreateView):
     template_name = 'patient_add.html'
     form_class = PatientModelForm
@@ -46,6 +40,12 @@ class PatientAddView(LoginRequiredMixin, generic.CreateView):
             recipient_list=["testuser@test.co.uk"],
         )
         return super(PatientAddView, self).form_valid(form)
+
+
+class PatientDetailView(LoginRequiredMixin, generic.DetailView):
+    template_name = 'patient_detail.html'
+    queryset = Patient.objects.all()
+    context_object_name = 'patient'
 
 
 class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
