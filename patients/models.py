@@ -18,7 +18,8 @@ ROLES = (
 
 
 class User(AbstractUser):
-    pass
+    is_organiser = models.BooleanField(default=True)
+    is_staff_member = models.BooleanField(default=False)
 
 
 class UserProfile(models.Model):
@@ -36,8 +37,8 @@ class Patient(models.Model):
     phone_number = models.CharField(max_length=15)
     email_address = models.EmailField()
     appointment_needed = models.BooleanField(default=False)
-    priority = models.CharField(choices=PRIORITIES, max_length=6)
-    notes = models.TextField(blank=True, null=True)
+    priority = models.CharField(choices=PRIORITIES, max_length=6, blank=True)
+    notes = models.TextField(blank=True)
     assigned_to = models.ForeignKey(
         'StaffMember', blank=True, null=True, on_delete=models.SET_NULL
     )
