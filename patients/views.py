@@ -5,6 +5,7 @@ from django.views import generic
 
 from .forms import CustomUserCreationForm, PatientModelForm
 from .models import Patient
+from staff.mixins import OrganiserAndLoginRequiredMixin
 
 
 class RegisterView(generic.CreateView):
@@ -25,7 +26,7 @@ class PatientListView(LoginRequiredMixin, generic.ListView):
     context_object_name = 'patients'
 
 
-class PatientAddView(LoginRequiredMixin, generic.CreateView):
+class PatientAddView(OrganiserAndLoginRequiredMixin, generic.CreateView):
     template_name = 'patient_add.html'
     form_class = PatientModelForm
 
@@ -57,7 +58,7 @@ class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
         return reverse('patients:patient-list')
 
 
-class PatientDeleteView(LoginRequiredMixin, generic.DeleteView):
+class PatientDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
     template_name = 'patient_delete.html'
     queryset = Patient.objects.all()
 
