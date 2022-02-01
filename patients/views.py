@@ -22,7 +22,18 @@ class HomePageView(generic.TemplateView):
 
 class PatientListView(LoginRequiredMixin, generic.ListView):
     template_name = 'patient_list.html'
-    queryset = Patient.objects.all()
+    
+    def get_queryset(self):
+        user = self.request.user
+        # Initial queryset of patients for entire organisation
+        if user.is_organiser:
+            queryset = Patient.objects.filter(organisation=user.userprofile)
+        else:
+            queryset = Patient.objects.filter(organisation=user.staffmember.organisation)           
+            # Filter based on logged in staff member
+            queryset = queryset.filter(assigned_to__user=user)        
+        return queryset
+
     context_object_name = 'patients'
 
 
@@ -45,13 +56,31 @@ class PatientAddView(OrganiserAndLoginRequiredMixin, generic.CreateView):
 
 class PatientDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = 'patient_detail.html'
-    queryset = Patient.objects.all()
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organiser:
+            queryset = Patient.objects.filter(organisation=user.userprofile)
+        else:
+            queryset = Patient.objects.filter(organisation=user.staffmember.organisation)
+            queryset = queryset.filter(assigned_to__user=user)       
+        return queryset
+    
     context_object_name = 'patient'
 
 
 class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'patient_update.html'
-    queryset = Patient.objects.all()
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organiser:
+            queryset = Patient.objects.filter(organisation=user.userprofile)
+        else:
+            queryset = Patient.objects.filter(organisation=user.staffmember.organisation)
+            queryset = queryset.filter(assigned_to__user=user)        
+        return queryset
+    
     form_class = PatientModelForm
 
     def get_success_url(self):

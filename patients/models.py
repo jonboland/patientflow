@@ -39,6 +39,7 @@ class Patient(models.Model):
     appointment_needed = models.BooleanField(default=False)
     priority = models.CharField(choices=PRIORITIES, max_length=6, blank=True)
     notes = models.TextField(blank=True)
+    organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     assigned_to = models.ForeignKey(
         'StaffMember', blank=True, null=True, on_delete=models.SET_NULL
     )
