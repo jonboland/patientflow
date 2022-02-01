@@ -10,7 +10,8 @@ class StaffListView(LoginRequiredMixin, generic.ListView):
     template_name = 'staff_list.html'
 
     def get_queryset(self):
-        return StaffMember.objects.all()
+        organisation = self.request.user.userprofile
+        return StaffMember.objects.filter(organisation=organisation)
 
     context_object_name = 'staff'
 
@@ -33,7 +34,8 @@ class StaffMemberDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = 'staff_member_detail.html'
 
     def get_queryset(self):
-        return StaffMember.objects.all()
+        organisation = self.request.user.userprofile
+        return StaffMember.objects.filter(organisation=organisation)
 
     context_object_name = 'staff_member'
 
@@ -43,7 +45,8 @@ class StaffMemberUpdateView(LoginRequiredMixin, generic.UpdateView):
     form_class = StaffMemberModelForm
 
     def get_queryset(self):
-        return StaffMember.objects.all()
+        organisation = self.request.user.userprofile
+        return StaffMember.objects.filter(organisation=organisation)
     
     def get_success_url(self):
         return reverse('staff:staff-list')
@@ -53,7 +56,10 @@ class StaffMemberUpdateView(LoginRequiredMixin, generic.UpdateView):
 
 class StaffMemberDeleteView(LoginRequiredMixin, generic.DeleteView):
     template_name = 'staff_member_delete.html'
-    queryset = StaffMember.objects.all()
+    
+    def get_queryset(self):
+        organisation = self.request.user.userprofile
+        return StaffMember.objects.filter(organisation=organisation)
 
     def get_success_url(self):
         return reverse('staff:staff-list')
