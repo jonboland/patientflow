@@ -27,3 +27,33 @@ class StaffMemberAddView(LoginRequiredMixin, generic.CreateView):
         staff_member.organisation = self.request.user.userprofile
         staff_member.save()
         return super(StaffMemberAddView, self).form_valid(form)
+
+
+class StaffMemberDetailView(LoginRequiredMixin, generic.DetailView):
+    template_name = 'staff_member_detail.html'
+
+    def get_queryset(self):
+        return StaffMember.objects.all()
+
+    context_object_name = 'staff_member'
+
+
+class StaffMemberUpdateView(LoginRequiredMixin, generic.UpdateView):
+    template_name = 'staff_member_update.html'
+    form_class = StaffMemberModelForm
+
+    def get_queryset(self):
+        return StaffMember.objects.all()
+    
+    def get_success_url(self):
+        return reverse('staff:staff-list')
+
+    context_object_name = 'staff_member'
+
+
+class StaffMemberDeleteView(LoginRequiredMixin, generic.DeleteView):
+    template_name = 'staff_member_delete.html'
+    queryset = StaffMember.objects.all()
+
+    def get_success_url(self):
+        return reverse('staff:staff-list')
