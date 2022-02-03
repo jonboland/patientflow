@@ -42,7 +42,7 @@ def staff_member_add(request):
             user.save()           
             staff_member = staff_member_form.save(commit=False)
             staff_member.user = user
-            staff_member.organisation=request.user.userprofile          
+            staff_member.organisation = request.user.userprofile          
             staff_member.save()
 
             send_mail(
@@ -93,10 +93,10 @@ def staff_member_update(request, pk):
             staff_member_form.save()
 
     context = {
-        'staff_member': staff_member,
-        'staff_member_form': staff_member_form,
         'user': user,
         'user_form': user_form,
+        'staff_member': staff_member,
+        'staff_member_form': staff_member_form,
     }
 
     return render(request, 'staff_member_update.html', context)
