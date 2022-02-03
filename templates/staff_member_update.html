@@ -9,7 +9,7 @@
     <div class="lg:w-4/5 mx-auto flex flex-wrap">
       <div class="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
         <h2 class="text-sm title-font text-gray-500 tracking-widest">STAFF MEMBER</h2>
-        <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{ staff_member.first_name }} {{ staff_member.last_name }}</h1>
+        <h1 class="text-gray-900 text-3xl title-font font-medium mb-4">{{ user.first_name }} {{ user.last_name }}</h1>
         <div class="flex mb-4">
           <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1" href="{% url 'staff:staff-member-detail' staff_member.pk %}">
             Overview
@@ -23,7 +23,8 @@
         </div>
         <form method="post">
           {% csrf_token %}
-          {{ form.as_p }}
+          {{ user_form.as_p }}
+          {{ staff_member_form.as_p }}
           <button type="submit">Update</button>
         </form>
         <a class="w-1/2 mt-3 flex ml-auto text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded" href="{% url 'staff:staff-member-delete' staff_member.pk %}">

@@ -1,10 +1,17 @@
+import random
+import string
+
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+from django.shortcuts import redirect, render, reverse
 from django.views import generic
-from django.shortcuts import reverse
-from django.contrib.auth.mixins import LoginRequiredMixin
 from patients.models import StaffMember
-from .forms import StaffMemberModelForm
+
+from .forms import StaffMemberModelForm, UserModelForm
 from .mixins import OrganiserAndLoginRequiredMixin
 
+
+User = get_user_model()
 
 
 class StaffListView(OrganiserAndLoginRequiredMixin, generic.ListView):
@@ -17,18 +24,45 @@ class StaffListView(OrganiserAndLoginRequiredMixin, generic.ListView):
     context_object_name = 'staff'
 
 
-class StaffMemberAddView(OrganiserAndLoginRequiredMixin, generic.CreateView):
-    template_name = 'staff_member_add.html'
-    form_class = StaffMemberModelForm
+def staff_member_add(request):
 
-    def get_success_url(self):
-        return reverse('staff:staff-list')
+    user_form = UserModelForm()
+    staff_member_form = StaffMemberModelForm()
 
-    def form_valid(self, form):
-        staff_member = form.save(commit=False)
-        staff_member.organisation = self.request.user.userprofile
-        staff_member.save()
-        return super(StaffMemberAddView, self).form_valid(form)
+    if request.method == "POST":
+        user_form = UserModelForm(request.POST)
+        staff_member_form = StaffMemberModelForm(request.POST)        
+        
+        if user_form.is_valid() and staff_member_form.is_valid():            
+            user = user_form.save(commit=False)
+            user.is_staff_member = True
+            user.is_organiser = False
+            password = ''.join(random.choice(string.ascii_letters) for x in range(10))
+            user.set_password(password)
+            user.save()           
+            staff_member = staff_member_form.save(commit=False)
+            staff_member.user = user
+            staff_member.organisation=request.user.userprofile          
+            staff_member.save()
+
+            send_mail(
+                subject='Patient Flow Invite',
+                message=(
+                    'You have been added to Patient Flow '
+                    'and can now login to begin picking up referrals.'
+                ),
+                from_email='admin@patientflow.co.uk',
+                recipient_list=[user.email],
+            )           
+
+            return redirect("/staff")
+
+    context = {
+        'user_form': user_form,
+        'staff_member_form': staff_member_form,
+    }
+
+    return render(request, "staff_member_add.html", context)
 
 
 class StaffMemberDetailView(OrganiserAndLoginRequiredMixin, generic.DetailView):
@@ -41,18 +75,31 @@ class StaffMemberDetailView(OrganiserAndLoginRequiredMixin, generic.DetailView):
     context_object_name = 'staff_member'
 
 
-class StaffMemberUpdateView(OrganiserAndLoginRequiredMixin, generic.UpdateView):
-    template_name = 'staff_member_update.html'
-    form_class = StaffMemberModelForm
+def staff_member_update(request, pk):
 
-    def get_queryset(self):
-        organisation = self.request.user.userprofile
-        return StaffMember.objects.filter(organisation=organisation)
-    
-    def get_success_url(self):
-        return reverse('staff:staff-list')
+    organisation = request.user.userprofile
 
-    context_object_name = 'staff_member'
+    staff_member = StaffMember.objects.get(id=pk, organisation=organisation) 
+    staff_member_form = StaffMemberModelForm(instance=staff_member)
+
+    user = User.objects.get(id=staff_member.user_id)
+    user_form = UserModelForm(instance=user)
+
+    if request.method == 'POST':
+        user_form = UserModelForm(request.POST, instance=user)
+        staff_member_form = StaffMemberModelForm(request.POST, instance=staff_member)
+        if user_form.is_valid() and staff_member_form.is_valid():
+            user_form.save()
+            staff_member_form.save()
+
+    context = {
+        'staff_member': staff_member,
+        'staff_member_form': staff_member_form,
+        'user': user,
+        'user_form': user_form,
+    }
+
+    return render(request, 'staff_member_update.html', context)
 
 
 class StaffMemberDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
