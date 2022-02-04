@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}Assign Patient{% endblock title %}
+
+{% block content %}
+  <a href="{% url 'patients:patient-list' %}">Back to patient list</a>
+  <hr />
+  <h1>Assign {{ patient.first_name }} {{ patient.last_name }} to Staff Member</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add</button>
+  </form>
+{% endblock content %}
