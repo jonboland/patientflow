@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.views import generic
 
-from .forms import CustomUserCreationForm, PatientModelForm
+from .forms import CustomUserCreationForm, PatientModelForm, PatientAssignForm
 from .models import Patient
 from staff.mixins import OrganiserAndLoginRequiredMixin
 
@@ -114,3 +114,33 @@ class PatientDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
 
     def get_success_url(self):
         return reverse('patients:patient-list')
+
+class PatientAssignView(OrganiserAndLoginRequiredMixin, generic.FormView):
+    template_name = 'patient_assign.html'
+    form_class = PatientAssignForm
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super(PatientAssignView, self).get_form_kwargs(**kwargs)
+        kwargs.update({
+            'request': self.request,
+        })
+        return kwargs
+   
+    def get_success_url(self):
+        return reverse('patients:patient-list')
+
+    def get_context_data(self, **kwargs):
+        context = super(PatientAssignView, self).get_context_data(**kwargs)
+        patient = Patient.objects.get(id=self.kwargs['pk'])
+        context.update({
+            'patient': patient 
+        })       
+        return context
+
+    # TODO: get patient object once
+    def form_valid(self, form):
+        assigned_to = form.cleaned_data['assigned_to']
+        patient = Patient.objects.get(id=self.kwargs['pk'])
+        patient.assigned_to=assigned_to
+        patient.save()
+        return super(PatientAssignView, self).form_valid(form)
