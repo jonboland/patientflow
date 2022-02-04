@@ -22,19 +22,37 @@ class HomePageView(generic.TemplateView):
 
 class PatientListView(LoginRequiredMixin, generic.ListView):
     template_name = 'patient_list.html'
+    context_object_name = 'patients'
     
     def get_queryset(self):
         user = self.request.user
         # Initial queryset of patients for entire organisation
         if user.is_organiser:
-            queryset = Patient.objects.filter(organisation=user.userprofile)
+            queryset = Patient.objects.filter(
+                organisation=user.userprofile,
+                assigned_to__isnull=False,
+            )
         else:
-            queryset = Patient.objects.filter(organisation=user.staffmember.organisation)           
+            queryset = Patient.objects.filter(
+                organisation=user.staffmember.organisation,
+                assigned_to__isnull=False,
+            )           
             # Filter based on logged in staff member
-            queryset = queryset.filter(assigned_to__user=user)        
+            queryset = queryset.filter(assigned_to__user=user)    
         return queryset
 
-    context_object_name = 'patients'
+    def get_context_data(self, **kwargs):
+        user = self.request.user
+        context = super(PatientListView, self).get_context_data(**kwargs)
+        if user.is_organiser:
+            queryset = Patient.objects.filter(
+                organisation=user.userprofile,
+                assigned_to__isnull=True,
+            )
+            context.update({
+                'unassigned_patients': queryset 
+            })
+        return context
 
 
 class PatientAddView(OrganiserAndLoginRequiredMixin, generic.CreateView):
@@ -45,6 +63,9 @@ class PatientAddView(OrganiserAndLoginRequiredMixin, generic.CreateView):
         return reverse('patients:patient-list')
 
     def form_valid(self, form):
+        patient = form.save(commit=False)
+        patient.organisation = self.request.user.userprofile
+        patient.save()
         send_mail(
             subject="New patient record added",
             message="Log in to Patient Flow to view the new record.",
