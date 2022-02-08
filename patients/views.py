@@ -4,7 +4,7 @@ from django.shortcuts import reverse
 from django.views import generic
 
 from .forms import CustomUserCreationForm, PatientModelForm, PatientAssignForm
-from .models import Patient
+from .models import Patient, AppointmentStatus
 from staff.mixins import OrganiserAndLoginRequiredMixin
 
 
@@ -43,7 +43,7 @@ class PatientListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         user = self.request.user
-        context = super(PatientListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if user.is_organiser:
             queryset = Patient.objects.filter(
                 organisation=user.userprofile,
@@ -72,7 +72,7 @@ class PatientAddView(OrganiserAndLoginRequiredMixin, generic.CreateView):
             from_email="test@test.co.uk",
             recipient_list=["testuser@test.co.uk"],
         )
-        return super(PatientAddView, self).form_valid(form)
+        return super().form_valid(form)
 
 
 class PatientDetailView(LoginRequiredMixin, generic.DetailView):
@@ -115,12 +115,13 @@ class PatientDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
     def get_success_url(self):
         return reverse('patients:patient-list')
 
+
 class PatientAssignView(OrganiserAndLoginRequiredMixin, generic.FormView):
     template_name = 'patient_assign.html'
     form_class = PatientAssignForm
 
     def get_form_kwargs(self, **kwargs):
-        kwargs = super(PatientAssignView, self).get_form_kwargs(**kwargs)
+        kwargs = super().get_form_kwargs(**kwargs)
         kwargs.update({
             'request': self.request,
         })
@@ -130,17 +131,33 @@ class PatientAssignView(OrganiserAndLoginRequiredMixin, generic.FormView):
         return reverse('patients:patient-list')
 
     def get_context_data(self, **kwargs):
-        context = super(PatientAssignView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         patient = Patient.objects.get(id=self.kwargs['pk'])
         context.update({
             'patient': patient 
         })       
         return context
 
-    # TODO: get patient object once
     def form_valid(self, form):
         assigned_to = form.cleaned_data['assigned_to']
         patient = Patient.objects.get(id=self.kwargs['pk'])
         patient.assigned_to=assigned_to
         patient.save()
-        return super(PatientAssignView, self).form_valid(form)
+        return super().form_valid(form)
+
+
+class AppointmentStatusListView(LoginRequiredMixin, generic.ListView):
+    template_name = 'appointment_stats.html'
+    context_object_name = 'appointment_stats'
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organiser:
+            queryset = AppointmentStatus.objects.filter(
+                organisation=user.userprofile
+            )
+        else:
+            queryset = AppointmentStatus.objects.filter(
+                organisation=user.staffmember.organisation
+            )       
+        return queryset
