@@ -27,7 +27,9 @@
         <tbody>
           {% for patient in appointment_stat.patients.all %}
             <tr>
-              <td class="px-4 py-3">{{ patient.first_name }}</td>
+              <td class="px-4 py-3">
+                <a class="hover:text-green-600" href="{% url 'patients:patient-detail' patient.pk %}">{{ patient.first_name }}</a>
+              </td>
               <td class="px-4 py-3">{{ patient.last_name }}</td>
             </tr>
           {% endfor %}
