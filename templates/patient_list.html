@@ -8,11 +8,16 @@
   <div class="container px-5 py-24 mx-auto flex flex-wrap">
     <div class="w-full mb-6 py-6 flex justify-between items-center border-b border-gray-200">
       <div>
-        <h1 class="text-4xl text-gray-800">Patients</h1>
+        <h1 class="text-4xl text-gray-800">Patients</h1>      
+        <a class="text-gray-500 hover:text-green-600" href="{% url 'patients:patient-add' %}">
+          Add patient
+        </a> 
       </div>
       {% if request.user.is_organiser %}    
         <div>       
-          <a class="text-gray-500 hover:text-green-600" href="{% url 'patients:patient-add' %}">Add patient</a> 
+          <a class="text-gray-500 hover:text-green-600" href="{% url 'patients:appointment-stats' %}">
+            View stats
+          </a> 
         </div>
       {% endif %}
     </div>    

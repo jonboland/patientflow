@@ -43,7 +43,7 @@ class Patient(models.Model):
         'StaffMember', blank=True, null=True, on_delete=models.SET_NULL
     )
     status = models.ForeignKey(
-        'AppointmentStatus', blank=True, null=True, on_delete=models.SET_NULL
+        'AppointmentStatus', related_name='patients', blank=True, null=True, on_delete=models.SET_NULL
     )
 
     def __str__(self):

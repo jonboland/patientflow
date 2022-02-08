@@ -92,6 +92,7 @@ class PatientDetailView(LoginRequiredMixin, generic.DetailView):
 
 class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'patient_update.html'
+    form_class = PatientModelForm
     
     def get_queryset(self):
         user = self.request.user
@@ -102,8 +103,6 @@ class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
             queryset = queryset.filter(assigned_to__user=user)        
         return queryset
     
-    form_class = PatientModelForm
-
     def get_success_url(self):
         return reverse('patients:patient-list')
 
@@ -149,6 +148,22 @@ class PatientAssignView(OrganiserAndLoginRequiredMixin, generic.FormView):
 class AppointmentStatusListView(LoginRequiredMixin, generic.ListView):
     template_name = 'appointment_stats.html'
     context_object_name = 'appointment_stats'
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organiser:
+            queryset = AppointmentStatus.objects.filter(
+                organisation=user.userprofile
+            )
+        else:
+            queryset = AppointmentStatus.objects.filter(
+                organisation=user.staffmember.organisation
+            )       
+        return queryset
+
+class AppointmentStatusDetailView(LoginRequiredMixin, generic.DetailView):
+    template_name = 'appointment_stat_detail.html'
+    context_object_name = 'appointment_stat'
 
     def get_queryset(self):
         user = self.request.user
