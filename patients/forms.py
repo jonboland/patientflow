@@ -17,7 +17,7 @@ class PatientModelForm(forms.ModelForm):
             'nhs_number',
             'phone_number',
             'email_address',
-            'appointment_needed',
+            'status',
             'priority',
             'notes',
             'assigned_to',

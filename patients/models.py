@@ -36,12 +36,14 @@ class Patient(models.Model):
     nhs_number = models.IntegerField()
     phone_number = models.CharField(max_length=15)
     email_address = models.EmailField()
-    appointment_needed = models.BooleanField(default=False)
     priority = models.CharField(choices=PRIORITIES, max_length=6, blank=True)
     notes = models.TextField(blank=True)
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     assigned_to = models.ForeignKey(
         'StaffMember', blank=True, null=True, on_delete=models.SET_NULL
+    )
+    status = models.ForeignKey(
+        'AppointmentStatus', blank=True, null=True, on_delete=models.SET_NULL
     )
 
     def __str__(self):
@@ -55,6 +57,17 @@ class StaffMember(models.Model):
 
     def __str__(self):
         return f"{self.role} {self.user.first_name} {self.user.last_name}"
+
+
+class AppointmentStatus(models.Model):
+    status = models.CharField(max_length=50)
+    organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.status
+
+    class Meta:
+        verbose_name_plural = "statuses"
 
 
 def post_user_added_signal(sender, instance, created, **kwargs):
