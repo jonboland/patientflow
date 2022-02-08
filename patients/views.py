@@ -3,7 +3,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.views import generic
 
-from .forms import CustomUserCreationForm, PatientModelForm, PatientAssignForm
+from .forms import(
+    CustomUserCreationForm, 
+    PatientModelForm, 
+    PatientAssignForm, 
+    PatientAppointmentStatusUpdateForm,
+)
 from .models import Patient, AppointmentStatus
 from staff.mixins import OrganiserAndLoginRequiredMixin
 
@@ -176,3 +181,19 @@ class AppointmentStatusDetailView(LoginRequiredMixin, generic.DetailView):
                 organisation=user.staffmember.organisation
             )       
         return queryset
+
+class PatientAppointmentStatusUpdateView(LoginRequiredMixin, generic.UpdateView):
+    template_name = 'patient_appointment_status_update.html'
+    form_class = PatientAppointmentStatusUpdateForm
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_organiser:
+            queryset = Patient.objects.filter(organisation=user.userprofile)
+        else:
+            queryset = Patient.objects.filter(organisation=user.staffmember.organisation)
+            queryset = queryset.filter(assigned_to__user=user)       
+        return queryset
+    
+    def get_success_url(self):
+        return reverse('patients:patient-detail', kwargs={'pk': self.get_object().id})

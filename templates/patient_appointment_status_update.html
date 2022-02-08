@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Update Patient Details{% endblock title %}
+{% block title %}Update Patient Appointment Status{% endblock title %}
 
 {% block content %}
 
@@ -14,10 +14,10 @@
           <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1" href="{% url 'patients:patient-detail' patient.pk %}">
             Overview
           </a>
-          <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1" href="{% url 'patients:patient-appointment-status-update' patient.pk %}">
+          <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1" href="{% url 'patients:patient-appointment-status-update' patient.pk %}">
             Appointment
           </a>
-          <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1" href="{% url 'patients:patient-update' patient.pk %}">
+          <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1" href="{% url 'patients:patient-update' patient.pk %}">
             Update Details
           </a>
         </div>

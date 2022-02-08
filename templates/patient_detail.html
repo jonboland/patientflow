@@ -14,8 +14,8 @@
           <a class="flex-grow text-green-500 border-b-2 border-green-500 py-2 text-lg px-1" href="{% url 'patients:patient-detail' patient.pk %}">
             Overview
           </a>
-          <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1">
-            Reviews
+          <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1" href="{% url 'patients:patient-appointment-status-update' patient.pk %}">
+            Appointment
           </a>
           <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1" href="{% url 'patients:patient-update' patient.pk %}">
             Update Details

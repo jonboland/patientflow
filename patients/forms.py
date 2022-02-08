@@ -17,10 +17,8 @@ class PatientModelForm(forms.ModelForm):
             'nhs_number',
             'phone_number',
             'email_address',
-            'status',
-            'priority',
-            'notes',
             'assigned_to',
+            'notes',
         )
 
 
@@ -39,3 +37,12 @@ class PatientAssignForm(forms.Form):
         staff_members = StaffMember.objects.filter(organisation=request.user.userprofile)
         super(PatientAssignForm, self).__init__(*args, **kwargs)
         self.fields['assigned_to'].queryset = staff_members
+
+class PatientAppointmentStatusUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Patient
+        fields = (
+            'status',
+            'priority',
+        )
+
