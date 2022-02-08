@@ -20,7 +20,9 @@
         <tbody>
           {% for status in appointment_stats %}
             <tr>
-              <td class="px-4 py-3">{{ status.status }}</td>
+              <td class="px-4 py-3"> 
+                <a href="{% url 'patients:appointment-stat-detail' status.pk %}">{{ status.status }}</a>
+              </td>
               <td class="px-4 py-3">TODO count</td>
             </tr>
           {% endfor %}
