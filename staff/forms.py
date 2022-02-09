@@ -10,11 +10,10 @@ class UserModelForm(forms.ModelForm):
     class Meta:
         model = User
         fields = (
-            'email',
             'username',
+            'email',
             'first_name',
             'last_name',
-
         )
 
 
@@ -22,4 +21,7 @@ class StaffMemberModelForm(forms.ModelForm):
 
     class Meta:
         model = StaffMember
-        fields = ('role',)
+        fields = (
+            'role',
+            'notes',
+        )
