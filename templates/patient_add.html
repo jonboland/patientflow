@@ -1,14 +1,22 @@
 {% extends "base.html" %}
+{% load tailwind_filters %}
 
 {% block title %}Add Patient{% endblock title %}
 
 {% block content %}
-  <a href="{% url 'patients:patient-list' %}">Back to patient list</a>
-  <hr />
-  <h1>Add Patient</h1>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add</button>
-  </form>
+  <div class="max-w-lg mx-auto"> 
+    <div class="py-1 border-b border-grey-200 mb-3">
+      <a class="hover:text-green-600" href="{% url 'patients:patient-list' %}">Back to patient list</a>
+    </div>  
+    <div class="mt-3">
+      <h1 class="text-2xl text-grey-800">Add Patient</h1>
+    </div>
+    <form class="mt-3" method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button class="w-full text-white bg-green-500 hover:bg-green-600 py-2 rounded-md" type="submit">
+        Add
+      </button>
+    </form>
+  </div>
 {% endblock content %}
