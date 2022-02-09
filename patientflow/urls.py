@@ -18,7 +18,6 @@ urlpatterns = [
     path('', HomePageView.as_view(), name='home-page'),
     path('patients/', include('patients.urls', namespace='patients')),
     path('staff/', include('staff.urls', namespace='staff')),
-    path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('reset-password/', PasswordResetView.as_view(), name='reset-password'),
