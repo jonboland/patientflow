@@ -16,12 +16,12 @@ User = get_user_model()
 
 class StaffListView(OrganiserAndLoginRequiredMixin, generic.ListView):
     template_name = 'staff_list.html'
+    context_object_name = 'staff'
 
     def get_queryset(self):
         organisation = self.request.user.userprofile
         return StaffMember.objects.filter(organisation=organisation)
-
-    context_object_name = 'staff'
+    
 
 
 def staff_member_add(request):
@@ -104,10 +104,18 @@ def staff_member_update(request, pk):
 
 class StaffMemberDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
     template_name = 'staff_member_delete.html'
-    
+
     def get_queryset(self):
         organisation = self.request.user.userprofile
         return StaffMember.objects.filter(organisation=organisation)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        staff_member = StaffMember.objects.get(id=self.kwargs['pk'])
+        context.update({
+            'staff_member': staff_member 
+        })       
+        return context
 
     def get_success_url(self):
         return reverse('staff:staff-list')

@@ -1,4 +1,30 @@
 {% extends "base.html" %}
+{% load tailwind_filters %}
+
+{% block title %}Delete Patient{% endblock title %}
+
+{% block content %}
+
+<div class="max-w-lg mx-auto">
+  <div class="py-1 border-b border-grey-200 mb-3">
+    <a class="hover:text-green-600" href="{% url 'patients:patient-update' patient.pk %}">Back to {{ patient.first_name }}'s details</a>
+  </div>
+  <div class="mt-3">
+    <h1 class="text-2xl text-grey-800">Delete {{ patient.first_name }} {{ patient.last_name }}'s record?</h1>
+    <p>This action cannot be undone.</p>
+  </div>  
+  <form class="mt-3" method="post">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button class="text-white bg-red-700 border-0 py-2 px-6 focus:outline-none hover:bg-red-800 rounded" type="submit">Confirm Delete</button>
+  </form>
+</div>
+
+{% endblock content %}
+
+
+{% comment %} 
+{% extends "base.html" %}
 
 {% block title %}Delete Patient{% endblock title %}
 
@@ -11,4 +37,4 @@
     {{ form.as_p }}
     <button type="submit">Confirm Delete</button>
   </form>
-{% endblock content %}
+{% endblock content %} {% endcomment %}

@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load tailwind_filters %}
+
 
 {% block title %}Update Patient Appointment Status{% endblock title %}
 
@@ -23,12 +25,9 @@
         </div>
         <form method="post">
           {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit">Update</button>
+          {{ form|crispy }}
+          <button class="w-full text-white bg-green-500 hover:bg-green-600 py-2 rounded-md" type="submit">Update</button>
         </form>
-        <a class="w-1/2 mt-3 flex ml-auto text-white bg-green-500 border-0 py-2 px-6 focus:outline-none hover:bg-green-600 rounded" href="{% url 'patients:patient-delete' patient.pk %}">
-        Delete
-        </a>
       </div>
       <img alt="ecommerce" class="lg:w-1/2 w-full lg:h-auto h-64 object-cover object-center rounded" src="https://dummyimage.com/400x400">
     </div>

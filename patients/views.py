@@ -116,6 +116,14 @@ class PatientDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
     template_name = 'patient_delete.html'
     queryset = Patient.objects.all()
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        patient = Patient.objects.get(id=self.kwargs['pk'])
+        context.update({
+            'patient': patient 
+        })       
+        return context
+
     def get_success_url(self):
         return reverse('patients:patient-list')
 
