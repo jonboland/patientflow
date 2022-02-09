@@ -36,8 +36,8 @@ class Patient(models.Model):
     nhs_number = models.IntegerField()
     phone_number = models.CharField(max_length=15)
     email_address = models.EmailField()
-    priority = models.CharField(choices=PRIORITIES, max_length=6, blank=True)
     notes = models.TextField(blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     assigned_to = models.ForeignKey(
         'StaffMember', blank=True, null=True, on_delete=models.SET_NULL
@@ -45,6 +45,7 @@ class Patient(models.Model):
     status = models.ForeignKey(
         'AppointmentStatus', related_name='patients', blank=True, null=True, on_delete=models.SET_NULL
     )
+    priority = models.CharField(choices=PRIORITIES, max_length=6, blank=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}, {self.age}, {self.nhs_number}"
@@ -53,6 +54,7 @@ class Patient(models.Model):
 class StaffMember(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    date_added = models.DateTimeField(auto_now_add=True)
     role = models.CharField(choices=ROLES, max_length=50)   
 
     def __str__(self):
