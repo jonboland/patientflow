@@ -55,14 +55,12 @@ def staff_member_add(request):
                 recipient_list=[user.email],
             )           
 
-            return redirect("/staff")
-
     context = {
         'user_form': user_form,
         'staff_member_form': staff_member_form,
     }
 
-    return render(request, "staff_member_add.html", context)
+    return render(request, 'staff_member_add.html', context)
 
 
 class StaffMemberDetailView(OrganiserAndLoginRequiredMixin, generic.DetailView):
@@ -91,6 +89,8 @@ def staff_member_update(request, pk):
         if user_form.is_valid() and staff_member_form.is_valid():
             user_form.save()
             staff_member_form.save()
+            
+            return redirect('/staff')
 
     context = {
         'user': user,
