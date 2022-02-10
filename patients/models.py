@@ -5,18 +5,6 @@ from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser
 
 
-PRIORITIES = (
-    ('L', 'Low'),
-    ('M', 'Medium'),
-    ('H', 'High'),
-)
-
-ROLES = (
-    ('GP', 'GP'),
-    ('Nurse', 'Nurse'),
-)
-
-
 class User(AbstractUser):
     is_organiser = models.BooleanField(default=True)
     is_staff_member = models.BooleanField(default=False)
@@ -45,7 +33,9 @@ class Patient(models.Model):
     status = models.ForeignKey(
         'AppointmentStatus', related_name='patients', blank=True, null=True, on_delete=models.SET_NULL
     )
-    priority = models.CharField(choices=PRIORITIES, max_length=6, blank=True)
+    priority = models.ForeignKey(
+        'Priority', related_name='patients', blank=True, null=True, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}, {self.age}, {self.nhs_number}"
@@ -55,7 +45,9 @@ class StaffMember(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     date_added = models.DateTimeField(auto_now_add=True)
-    role = models.CharField(choices=ROLES, max_length=50)
+    role = models.ForeignKey(
+        'Role', related_name='staff_members', blank=True, null=True, on_delete=models.SET_NULL
+    )
     notes = models.TextField(blank=True)  
 
     def __str__(self):
@@ -70,7 +62,26 @@ class AppointmentStatus(models.Model):
         return self.status
 
     class Meta:
-        verbose_name_plural = "statuses"
+        verbose_name_plural = 'statuses'
+
+
+class Role(models.Model):
+    role = models.CharField(max_length=50)
+    organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.role
+
+
+class Priority(models.Model):
+    priority = models.CharField(max_length=50)
+    organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.priority
+
+    class Meta:
+        verbose_name_plural = 'priorities'
 
 
 def post_user_added_signal(sender, instance, created, **kwargs):
