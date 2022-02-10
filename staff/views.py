@@ -9,6 +9,7 @@ from patients.models import StaffMember
 
 from .forms import StaffMemberModelForm, UserModelForm
 from .mixins import OrganiserAndLoginRequiredMixin
+from .decorators import login_and_organiser_required
 
 
 User = get_user_model()
@@ -23,9 +24,9 @@ class StaffListView(OrganiserAndLoginRequiredMixin, generic.ListView):
         return StaffMember.objects.filter(organisation=organisation)
     
 
-
+@login_and_organiser_required
 def staff_member_add(request):
-
+    
     user_form = UserModelForm()
     staff_member_form = StaffMemberModelForm()
 
@@ -53,7 +54,9 @@ def staff_member_add(request):
                 ),
                 from_email='admin@patientflow.co.uk',
                 recipient_list=[user.email],
-            )           
+            )
+            
+            return redirect('staff:staff-list')
 
     context = {
         'user_form': user_form,
@@ -73,8 +76,9 @@ class StaffMemberDetailView(OrganiserAndLoginRequiredMixin, generic.DetailView):
     context_object_name = 'staff_member'
 
 
+@login_and_organiser_required
 def staff_member_update(request, pk):
-
+    
     organisation = request.user.userprofile
 
     staff_member = StaffMember.objects.get(id=pk, organisation=organisation) 
@@ -82,7 +86,7 @@ def staff_member_update(request, pk):
 
     user = User.objects.get(id=staff_member.user_id)
     user_form = UserModelForm(instance=user)
-
+    
     if request.method == 'POST':
         user_form = UserModelForm(request.POST, instance=user)
         staff_member_form = StaffMemberModelForm(request.POST, instance=staff_member)
