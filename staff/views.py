@@ -94,7 +94,7 @@ def staff_member_update(request, pk):
             user_form.save()
             staff_member_form.save()
             
-            return redirect('/staff')
+            return redirect(f'/staff/{pk}/')
 
     context = {
         'user': user,
