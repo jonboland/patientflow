@@ -3,17 +3,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.views import generic
 
-from .forms import CustomUserCreationForm, PatientModelForm, PatientAppointmentStatusUpdateForm
+from .forms import PatientModelForm, PatientAppointmentStatusUpdateForm
 from .models import Patient, AppointmentStatus
 from staff.mixins import OrganiserAndLoginRequiredMixin
-
-
-class RegisterView(generic.CreateView):
-    template_name = 'registration/register.html'
-    form_class = CustomUserCreationForm
-
-    def get_success_url(self):
-        return reverse('login')
 
 
 class HomePageView(generic.TemplateView):

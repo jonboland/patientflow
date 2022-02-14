@@ -10,7 +10,7 @@ from django.contrib.auth.views import (
     PasswordResetCompleteView,
 )
 from django.urls import path, include
-from patients.views import HomePageView, RegisterView
+from patients.views import HomePageView
 
 
 urlpatterns = [
