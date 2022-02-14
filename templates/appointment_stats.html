@@ -18,12 +18,12 @@
           </tr>
         </thead>
         <tbody>
-          {% for status in appointment_stats %}
+          {% for status_object, count in patient_status_counts.items %}
             <tr>
               <td class="px-4 py-3"> 
-                <a href="{% url 'patients:appointment-stat-detail' status.pk %}">{{ status.status }}</a>
+                <a href="{% url 'patients:appointment-stat-detail' status_object.pk %}">{{ status_object }}</a>
               </td>
-              <td class="px-4 py-3">TODO count</td>
+              <td class="px-4 py-3">{{ count }}</td>
             </tr>
           {% endfor %}
         </tbody>

@@ -3,11 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.views import generic
 
-from .forms import(
-    CustomUserCreationForm, 
-    PatientModelForm, 
-    PatientAppointmentStatusUpdateForm,
-)
+from .forms import CustomUserCreationForm, PatientModelForm, PatientAppointmentStatusUpdateForm
 from .models import Patient, AppointmentStatus
 from staff.mixins import OrganiserAndLoginRequiredMixin
 
@@ -30,7 +26,6 @@ class PatientListView(LoginRequiredMixin, generic.ListView):
     
     def get_queryset(self):
         user = self.request.user
-        # Initial queryset of patients for entire organisation
         if user.is_organiser:
             queryset = Patient.objects.filter(
                 organisation=user.userprofile, assigned_to__isnull=False,
@@ -39,10 +34,9 @@ class PatientListView(LoginRequiredMixin, generic.ListView):
             queryset = Patient.objects.filter(
                 organisation=user.staffmember.organisation, assigned_to__isnull=False,
             )           
-            # Filter based on logged in staff member
             queryset = queryset.filter(assigned_to__user=user)    
+        
         return queryset
-
 
     def get_context_data(self, **kwargs):
         user = self.request.user
@@ -55,11 +49,10 @@ class PatientListView(LoginRequiredMixin, generic.ListView):
                 assigned_to__isnull=True,
             )
             context.update({'unassigned_patients': unassigned_queryset})
-            status_objects = AppointmentStatus.objects.filter(organisation=organisation)
         else:
             organisation = user.staffmember.organisation
-            status_objects = AppointmentStatus.objects.filter(organisation=organisation)
-
+        
+        status_objects = AppointmentStatus.objects.filter(organisation=organisation)
         patient_statuses = sorted(list(set(str(status) for status in status_objects)))
         patient_by_status = dict()
 
@@ -159,19 +152,30 @@ class PatientDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
 
 class AppointmentStatusListView(LoginRequiredMixin, generic.ListView):
     template_name = 'appointment_stats.html'
-    context_object_name = 'appointment_stats'
+    queryset = AppointmentStatus.objects.none()
 
-    def get_queryset(self):
+    def get_context_data(self, **kwargs):
         user = self.request.user
+        context = super().get_context_data(**kwargs)
+
         if user.is_organiser:
-            queryset = AppointmentStatus.objects.filter(
-                organisation=user.userprofile
-            )
+            organisation = user.userprofile
         else:
-            queryset = AppointmentStatus.objects.filter(
-                organisation=user.staffmember.organisation
-            )       
-        return queryset
+            organisation = user.staffmember.organisation
+        
+        status_objects = AppointmentStatus.objects.filter(organisation=organisation)
+        patient_status_counts = dict()
+
+        for status_object in status_objects:
+            queryset = Patient.objects.filter(
+                organisation=organisation, status__status=status_object
+            ).count()           
+            patient_status_counts[status_object] = queryset
+
+        context.update({'patient_status_counts': patient_status_counts})
+
+        return context
+
 
 class AppointmentStatusDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = 'appointment_stat_detail.html'
@@ -188,6 +192,7 @@ class AppointmentStatusDetailView(LoginRequiredMixin, generic.DetailView):
                 organisation=user.staffmember.organisation
             )       
         return queryset
+
 
 class PatientAppointmentStatusUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'patient_appointment_status_update.html'
