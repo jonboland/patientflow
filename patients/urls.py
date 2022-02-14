@@ -23,7 +23,6 @@ urlpatterns = [
         '<int:pk>/appointment-status/',
         PatientAppointmentStatusUpdateView.as_view(),
         name='patient-appointment-status-update'),
-
     path(
         'appointment-stats/',
         AppointmentStatusListView.as_view(),

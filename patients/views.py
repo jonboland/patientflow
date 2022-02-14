@@ -3,11 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.views import generic
 
-from .forms import(
-    CustomUserCreationForm, 
-    PatientModelForm, 
-    PatientAppointmentStatusUpdateForm,
-)
+from .forms import CustomUserCreationForm, PatientModelForm, PatientAppointmentStatusUpdateForm
 from .models import Patient, AppointmentStatus
 from staff.mixins import OrganiserAndLoginRequiredMixin
 
@@ -26,51 +22,34 @@ class HomePageView(generic.TemplateView):
 
 class PatientListView(LoginRequiredMixin, generic.ListView):
     template_name = 'patient_list.html'
-    context_object_name = 'assigned_patients'
-    
-    def get_queryset(self):
-        user = self.request.user
-        # Initial queryset of patients for entire organisation
-        if user.is_organiser:
-            queryset = Patient.objects.filter(
-                organisation=user.userprofile, assigned_to__isnull=False,
-            )
-        else:
-            queryset = Patient.objects.filter(
-                organisation=user.staffmember.organisation, assigned_to__isnull=False,
-            )           
-            # Filter based on logged in staff member
-            queryset = queryset.filter(assigned_to__user=user)    
-        return queryset
-
+    queryset = Patient.objects.none()
 
     def get_context_data(self, **kwargs):
         user = self.request.user
         context = super().get_context_data(**kwargs)
 
         if user.is_organiser:
-            organisation = user.userprofile
-            unassigned_queryset = Patient.objects.filter(
-                organisation=organisation,
-                assigned_to__isnull=True,
-            )
-            context.update({'unassigned_patients': unassigned_queryset})
-            status_objects = AppointmentStatus.objects.filter(organisation=organisation)
+            org = user.userprofile
+            assigned = Patient.objects.filter(organisation=org, assigned_to__isnull=False)
+            unassigned = Patient.objects.filter(organisation=org, assigned_to__isnull=True)
+            context.update({'unassigned_patients': unassigned})
         else:
-            organisation = user.staffmember.organisation
-            status_objects = AppointmentStatus.objects.filter(organisation=organisation)
+            org = user.staffmember.organisation
+            assigned = Patient.objects.filter(organisation=org, assigned_to__isnull=False)
+            assigned = assigned.filter(assigned_to__user=user)
+        
+        context.update({'assigned_patients': assigned})
+        
+        status_objects = AppointmentStatus.objects.filter(organisation=org).order_by('status')
+        patients_by_status = dict()
 
-        patient_statuses = sorted(list(set(str(status) for status in status_objects)))
-        patient_by_status = dict()
-
-        for patient_status in patient_statuses:
-            queryset = Patient.objects.filter(organisation=organisation, status__status=patient_status)
+        for status_object in status_objects:
+            queryset = Patient.objects.filter(organisation=org, status__status=status_object)
             if not user.is_organiser:
                 queryset = queryset.filter(assigned_to__user=user)
-            
-            patient_by_status[patient_status] = queryset
+            patients_by_status[status_object] = queryset
 
-        context.update({'patient_by_status': patient_by_status})
+        context.update({'patients_by_status': patients_by_status})
 
         return context
 
@@ -159,19 +138,28 @@ class PatientDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
 
 class AppointmentStatusListView(LoginRequiredMixin, generic.ListView):
     template_name = 'appointment_stats.html'
-    context_object_name = 'appointment_stats'
+    queryset = Patient.objects.none()
 
-    def get_queryset(self):
+    def get_context_data(self, **kwargs):
         user = self.request.user
+        context = super().get_context_data(**kwargs)
+
         if user.is_organiser:
-            queryset = AppointmentStatus.objects.filter(
-                organisation=user.userprofile
-            )
+            org = user.userprofile
         else:
-            queryset = AppointmentStatus.objects.filter(
-                organisation=user.staffmember.organisation
-            )       
-        return queryset
+            org = user.staffmember.organisation
+        
+        status_objects = AppointmentStatus.objects.filter(organisation=org).order_by('status')
+        patient_status_counts = dict()
+
+        for status_object in status_objects:
+            queryset = Patient.objects.filter(organisation=org, status__status=status_object).count()           
+            patient_status_counts[status_object] = queryset
+
+        context.update({'patient_status_counts': patient_status_counts})
+
+        return context
+
 
 class AppointmentStatusDetailView(LoginRequiredMixin, generic.DetailView):
     template_name = 'appointment_stat_detail.html'
@@ -188,6 +176,7 @@ class AppointmentStatusDetailView(LoginRequiredMixin, generic.DetailView):
                 organisation=user.staffmember.organisation
             )       
         return queryset
+
 
 class PatientAppointmentStatusUpdateView(LoginRequiredMixin, generic.UpdateView):
     template_name = 'patient_appointment_status_update.html'

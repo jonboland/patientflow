@@ -16,10 +16,10 @@
       <table class="table-auto w-full text-left whitespace-no-wrap">
         <thead>
           <tr>
-            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">
+            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-green-100 rounded-tl rounded-bl">
               First Name
             </th>
-            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">
+            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-green-100 rounded-tr rounded-br">
               Last Name
             </th>
           </tr>
@@ -27,10 +27,10 @@
         <tbody>
           {% for patient in appointment_stat.patients.all %}
             <tr>
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 border-t border-grey-500">
                 <a class="hover:text-green-600" href="{% url 'patients:patient-detail' patient.pk %}">{{ patient.first_name }}</a>
               </td>
-              <td class="px-4 py-3">{{ patient.last_name }}</td>
+              <td class="px-4 py-3 border-t border-grey-500">{{ patient.last_name }}</td>
             </tr>
           {% endfor %}
         </tbody>
