@@ -26,13 +26,13 @@ class StaffListView(OrganiserAndLoginRequiredMixin, generic.ListView):
 
 @login_and_organiser_required
 def staff_member_add(request):
-    
+    organisation = request.user.userprofile
     user_form = UserModelForm()
-    staff_member_form = StaffMemberModelForm()
+    staff_member_form = StaffMemberModelForm(organisation=organisation)
 
     if request.method == "POST":
         user_form = UserModelForm(request.POST)
-        staff_member_form = StaffMemberModelForm(request.POST)        
+        staff_member_form = StaffMemberModelForm(request.POST, organisation=organisation)
         
         if user_form.is_valid() and staff_member_form.is_valid():            
             user = user_form.save(commit=False)
@@ -78,18 +78,18 @@ class StaffMemberDetailView(OrganiserAndLoginRequiredMixin, generic.DetailView):
 
 @login_and_organiser_required
 def staff_member_update(request, pk):
-    
     organisation = request.user.userprofile
-
-    staff_member = StaffMember.objects.get(id=pk, organisation=organisation) 
-    staff_member_form = StaffMemberModelForm(instance=staff_member)
+    staff_member = StaffMember.objects.get(id=pk, organisation=organisation)
+    staff_member_form = StaffMemberModelForm(instance=staff_member, organisation=organisation)
 
     user = User.objects.get(id=staff_member.user_id)
     user_form = UserModelForm(instance=user)
     
     if request.method == 'POST':
         user_form = UserModelForm(request.POST, instance=user)
-        staff_member_form = StaffMemberModelForm(request.POST, instance=staff_member)
+        staff_member_form = StaffMemberModelForm(
+            request.POST, instance=staff_member, organisation=organisation
+        )
         if user_form.is_valid() and staff_member_form.is_valid():
             user_form.save()
             staff_member_form.save()
