@@ -5,7 +5,9 @@
 <section class="text-gray-600 body-font">
   <div class="container px-5 py-24 mx-auto">
     <div class="flex flex-col text-center w-full mb-20">
-      <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">Appointment Stats</h1>
+      <h1 class="sm:text-4xl text-3xl font-medium title-font mb-2 text-gray-900">
+        Appointment Stats
+      </h1>
       <p class="lg:w-2/3 mx-auto leading-relaxed text-base">
           Stats for all current patient appoinment requests</p>
     </div>
@@ -13,17 +15,21 @@
       <table class="table-auto w-full text-left whitespace-no-wrap">
         <thead>
           <tr>
-            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Status</th>
-            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Patient Count</th>
+            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-green-100 rounded-tl rounded-bl">
+              Status
+            </th>
+            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-green-100 rounded-tr rounded-br">
+              Patient Count
+            </th>
           </tr>
         </thead>
         <tbody>
           {% for status_object, count in patient_status_counts.items %}
             <tr>
-              <td class="px-4 py-3"> 
-                <a href="{% url 'patients:appointment-stat-detail' status_object.pk %}">{{ status_object }}</a>
+              <td class="px-4 py-3 border-t border-grey-500"> 
+                <a class="hover:text-green-600" href="{% url 'patients:appointment-stat-detail' status_object.pk %}">{{ status_object }}</a>
               </td>
-              <td class="px-4 py-3">{{ count }}</td>
+              <td class="px-4 py-3 border-t border-grey-500">{{ count }}</td>
             </tr>
           {% endfor %}
         </tbody>
