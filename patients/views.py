@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.views import generic
 
-from .forms import PatientModelForm, PatientAppointmentStatusUpdateForm  # CustomUserCreationForm
+from .forms import PatientModelForm, PatientAppointmentStatusUpdateForm
 from .models import Patient, AppointmentStatus
 from staff.mixins import OrganiserAndLoginRequiredMixin
 
