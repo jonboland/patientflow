@@ -36,9 +36,9 @@ class PatientAppointmentStatusUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request')
-        organisation = request.user.userprofile
-        statuses = AppointmentStatus.objects.filter(organisation=organisation)
-        priorities = Priority.objects.filter(organisation=organisation)
+        org = request.user.userprofile
+        statuses = AppointmentStatus.objects.filter(organisation=org).order_by('status')
+        priorities = Priority.objects.filter(organisation=org)
         super().__init__(*args, **kwargs)
         self.fields['status'].queryset = statuses
         self.fields['status'].required = False
