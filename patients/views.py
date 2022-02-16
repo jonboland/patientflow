@@ -102,7 +102,7 @@ class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
     def get_form_kwargs(self, **kwargs):
         kwargs = super().get_form_kwargs(**kwargs)
         kwargs.update({
-            'request': self.request,
+            'user': self.request.user,
         })
         return kwargs
     
@@ -121,7 +121,6 @@ class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
         except Http404 as ex:
             logger.info(f"{ex},\nPatientUpdateView handled exception type: {type(ex)}")
             return reverse('patients:patient-list')
-
 
 
 class PatientDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
@@ -189,7 +188,7 @@ class PatientAppointmentStatusUpdateView(LoginRequiredMixin, generic.UpdateView)
     def get_form_kwargs(self, **kwargs):
         kwargs = super().get_form_kwargs(**kwargs)
         kwargs.update({
-            'request': self.request,
+            'user': self.request.user,
         })
         return kwargs
     
