@@ -1,11 +1,18 @@
+import logging
+
 from django.core.mail import send_mail
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import reverse
 from django.views import generic
+from django.http import Http404
 
 from .forms import PatientModelForm, PatientAppointmentStatusUpdateForm
 from .models import Patient, AppointmentStatus
 from staff.mixins import OrganiserAndLoginRequiredMixin
+
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class HomePageView(generic.TemplateView):
@@ -95,7 +102,7 @@ class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
     def get_form_kwargs(self, **kwargs):
         kwargs = super().get_form_kwargs(**kwargs)
         kwargs.update({
-            'request': self.request,
+            'user': self.request.user,
         })
         return kwargs
     
@@ -109,7 +116,11 @@ class PatientUpdateView(LoginRequiredMixin, generic.UpdateView):
         return queryset
 
     def get_success_url(self):
-        return reverse('patients:patient-detail', kwargs={'pk': self.get_object().id})
+        try:
+            return reverse('patients:patient-detail', kwargs={'pk': self.get_object().id})
+        except Http404 as ex:
+            logger.info(f"{ex},\nPatientUpdateView handled exception type: {type(ex)}")
+            return reverse('patients:patient-list')
 
 
 class PatientDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
@@ -177,7 +188,7 @@ class PatientAppointmentStatusUpdateView(LoginRequiredMixin, generic.UpdateView)
     def get_form_kwargs(self, **kwargs):
         kwargs = super().get_form_kwargs(**kwargs)
         kwargs.update({
-            'request': self.request,
+            'user': self.request.user,
         })
         return kwargs
     

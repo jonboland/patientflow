@@ -10,8 +10,12 @@ class PatientModelForm(forms.ModelForm):
     assigned_to = forms.ModelChoiceField(queryset=StaffMember.objects.none())
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
-        staff_members = StaffMember.objects.filter(organisation=request.user.userprofile)
+        user = kwargs.pop('user')
+        if user.is_organiser:
+            org = user.userprofile
+        else:
+            org = user.staffmember.organisation
+        staff_members = StaffMember.objects.filter(organisation=org)
         super().__init__(*args, **kwargs)
         self.fields['assigned_to'].queryset = staff_members
         self.fields['assigned_to'].required = False
@@ -35,8 +39,11 @@ class PatientAppointmentStatusUpdateForm(forms.ModelForm):
     priority = forms.ModelChoiceField(queryset=Priority.objects.none())
 
     def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request')
-        org = request.user.userprofile
+        user = kwargs.pop('user')
+        if user.is_organiser:
+            org = user.userprofile
+        else:
+            org = user.staffmember.organisation
         statuses = AppointmentStatus.objects.filter(organisation=org).order_by('status')
         priorities = Priority.objects.filter(organisation=org)
         super().__init__(*args, **kwargs)
