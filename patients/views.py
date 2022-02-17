@@ -60,7 +60,7 @@ class PatientAddView(OrganiserAndLoginRequiredMixin, generic.CreateView):
     def get_form_kwargs(self, **kwargs):
         kwargs = super().get_form_kwargs(**kwargs)
         kwargs.update({
-            'request': self.request,
+            'user': self.request.user,
         })
         return kwargs
     
